@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Task List</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0f0f1e;
+        }
+
+        .glass {
+            background: rgba(45, 45, 58, 0.8);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border-radius: 1rem;
+            backdrop-filter: blur(20px);
+            animation: fadeIn 1.2s ease-out;
+            border: 2px solid rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+            transition: border 0.4s, box-shadow 0.4s;
+        }
+
+        .glass:hover {
+            border-color: #6366f1;
+            box-shadow: 0 0 25px rgba(129, 140, 248, 0.6);
+        }
+
+        .glow-btn {
+            transition: 0.4s;
+            box-shadow: 0 0 10px #6366f1, 0 0 20px #6366f1 inset;
+        }
+
+        .glow-btn:hover {
+            background-color: #4f46e5 !important;
+            box-shadow: 0 0 15px #818cf8, 0 0 25px #818cf8 inset;
+            transform: scale(1.05);
+        }
+
+        .glow-badge {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        .hover-glow-row:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+        }
+
+        .input-group input {
+            border-radius: 0.5rem 0 0 0.5rem;
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .input-group:hover input {
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
+        }
+
+        .table {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 2px solid rgba(129, 140, 248, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4">
+
+<div class="container glass text-white p-5 max-w-3xl w-full">
+    <h1 class="text-center text-3xl font-bold mb-6 text-indigo-400 animate-pulse">🚀 Futuristic Task List</h1>
+
+    <form action="/tasks/create" method="post" class="mb-5">
+        <div class="input-group shadow-sm transition-transform duration-300 hover:scale-105">
+            <input type="text" name="task_name" placeholder="What's on your mind?" required
+                   class="form-control bg-dark text-white placeholder-gray-400 border-0">
+            <button type="submit" class="btn btn-primary glow-btn">Add Task</button>
+        </div>
+    </form>
+
+    <div class="table-responsive rounded-lg overflow-hidden">
+        <table class="table table-dark table-hover table-bordered border-secondary rounded-lg mb-0 transition duration-500 ease-in-out">
+            <thead class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Task</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task : ${tasks}" class="align-middle hover-glow-row transition duration-300">
+                <td th:text="${task.id}"></td>
+                <td th:text="${task.task_name}"></td>
+                <td>
+                    <span class="badge glow-badge"
+                          th:text="${task.status} ? '✅ Completed' : '⌛ Pending'"
+                          th:classappend="${task.status} ? 'bg-success' : 'bg-warning text-dark'">
+                    </span>
+                </td>
+                <td class="d-flex gap-2">
+                    <form th:action="@{/tasks/toggle/{id}(id=${task.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-success glow-btn">Toggle</button>
+                    </form>
+                    <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-danger glow-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
